@@ -251,19 +251,19 @@ void Generate_Inst(string name, int mission_type, int row_size, std::vector<vect
 
 int main(int argc, char *argv[]){
 
+    int Mission_type = VINS_MONO;
     string filename1 = "test_pos.txt";
     string filename2 = "test_num.txt";
-    std::vector<vector<int>> lines_position,lines_num;
+    string filename_out = "0";
 
-    read_data(filename1,lines_position);
-    read_data(filename2,lines_num);
-
-    cout<<"num: "<<lines_num.size()<<endl;
-
-    int Mission_type = VINS_MONO;
     cout<<argc<<endl;
     if(argc>1){
         string param = std::string(argv[1]);
+        if(argc>4){
+            filename1 = std::string(argv[2]);
+            filename2 = std::string(argv[3]);
+            filename_out = std::string(argv[4]);
+        }
         if(param=="VINS_MONO" || param=="1"){
             Mission_type = VINS_MONO;
         }else if(param=="VINS_fusion" || param=="2"){
@@ -276,7 +276,15 @@ int main(int argc, char *argv[]){
     }
     cout<<"Mission: "<<Mission_type<<endl;
 
-    Generate_Inst("0", Mission_type, lines_num.size(), lines_position, lines_num);
+
+    std::vector<vector<int>> lines_position,lines_num;
+
+    read_data(filename1,lines_position);
+    read_data(filename2,lines_num);
+
+    cout<<"num: "<<lines_num.size()<<endl;
+
+    Generate_Inst(filename_out, Mission_type, lines_num.size(), lines_position, lines_num);
 
     for (auto s : lines_position){
         for (auto a : s){

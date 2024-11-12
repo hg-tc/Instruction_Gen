@@ -1,0 +1,1 @@
+./inst_gen 3 test_pos.txt test_num.txt 0
