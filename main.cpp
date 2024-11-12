@@ -71,9 +71,10 @@ void Generate_Inst(string name, int mission_type, int row_size, std::vector<vect
     int vis_index = std::distance(test_num_list.begin(),vis_iter);
 
     std::vector<int> pos_index;
-    for (int i=0; i<lines_num_all.size(); i++){
+    for (int i=0; i<test_num_list.size(); i++){
         if(i != vis_index){
             pos_index.push_back(i);
+            cout << "indexp: "<< i<<endl;
         }
     }
 
@@ -90,8 +91,8 @@ void Generate_Inst(string name, int mission_type, int row_size, std::vector<vect
     vector<int> code_pos;
     string uni_code;
     vector<int> pos_list;
-    vector<int> position_col(2);
-    vector<int> pre_position_col(2);
+    vector<int> position_col(pos_block_num);
+    vector<int> pre_position_col(pos_block_num);
     int ETF_block_num = 0;
     int vision_col = 0;
     int pre_vision_col = 0;
@@ -119,67 +120,75 @@ void Generate_Inst(string name, int mission_type, int row_size, std::vector<vect
             cout << "count: "<< count <<"=====writing Instruction=====" << endl;
             pre_vision_col = vision_col;
             vision_col = lines_position[vis_index];
-
+            
             for(int i=0; i<pos_block_num; i++){
-                pre_position_col.push_back(position_col[pos_index[i]]);
-                position_col.push_back(lines_position[pos_index[i]]);
+                pre_position_col[i] = position_col[i];
+                position_col[i] = lines_position[pos_index[i]];
             }
+            
             // pre_position_col[0] = position_col[0];
             // pre_position_col[1] = position_col[1];
             // position_col[0] = lines_position[0];
             // position_col[1] = lines_position[1];
 
             if(count!=1){
-                for(int i=0;i<pos_block_num;i++){
-                    cout << "pos_now: " << pre_position_col[i] << endl;
-                    vector<int>::iterator it,it2;
-                    it=find(pos_list.begin(),pos_list.end(),pre_position_col[i]);
-                    if(it==pos_list.end()){
-                        cout<<"no matched position"<<endl;
+                for(int i=0;i<2;i++){
+                    if(i<pos_block_num){
+                        cout << "pos_now: " << pre_position_col[i] << endl;
+                        vector<int>::iterator it,it2;
+                        it=find(pos_list.begin(),pos_list.end(),pre_position_col[i]);
+                        if(it==pos_list.end()){
+                            cout<<"no matched position"<<endl;
+                            for(int j=0;j<code_list.size();j++){
+                                code_list[j]+='0'; 
+                            }
+                        }
+                        else{
+                            it2=find(code_pos.begin(),code_pos.end(),pre_position_col[i]);
+                            if(it2==code_pos.end()){
+                                cout<<"no excited position, create_new"<<endl;
+                                int index = std::distance(pos_list.begin(),it);
+                                string new_code(uni_code);
+                                new_code.replace(index,1,"1");
+                                new_code += '1';
+                                cout<<"new_code: "<< new_code <<endl;
+                                for(int j=0;j<code_list.size();j++){
+                                    code_list[j]+='0'; 
+                                }
+                                code_list.push_back(new_code);
+                                code_pos.push_back(pre_position_col[i]);
+                                
+                            }
+                            else{
+                                cout<<"find excited position, modified code"<<endl;
+                                int index = std::distance(code_pos.begin(),it2);
+                                for(int j=0;j<code_list.size();j++){
+                                    if(j==index){code_list[j] += '1';}
+                                    else{code_list[j]+='0';}   
+                                }
+                                cout <<"index: "<< index <<endl;
+                                // for(int j=0;j<code_list.size();j++){
+                                //     string code_now = code_list[j];
+                                //     cout<< code_now << endl;
+                                // }
+                            }
+                            ETF_block_num -= 1;
+                        }
+                        pos_list.push_back(pre_position_col[i]);
+                        ETF_block_num += 1;
+                    }
+                    else{
                         for(int j=0;j<code_list.size();j++){
                             code_list[j]+='0'; 
                         }
                     }
-                    else{
-                        it2=find(code_pos.begin(),code_pos.end(),pre_position_col[i]);
-                        if(it2==code_pos.end()){
-                            cout<<"no excited position, create_new"<<endl;
-                            int index = std::distance(pos_list.begin(),it);
-                            string new_code(uni_code);
-                            new_code.replace(index,1,"1");
-                            new_code += '1';
-                            cout<<"new_code: "<< new_code <<endl;
-                            for(int j=0;j<code_list.size();j++){
-                                code_list[j]+='0'; 
-                            }
-                            code_list.push_back(new_code);
-                            code_pos.push_back(pre_position_col[i]);
-                            
-                        }
-                        else{
-                            cout<<"find excited position, modified code"<<endl;
-                            int index = std::distance(code_pos.begin(),it2);
-                            for(int j=0;j<code_list.size();j++){
-                                if(j==index){code_list[j] += '1';}
-                                else{code_list[j]+='0';}   
-                            }
-                            cout <<"index: "<< index <<endl;
-                            // for(int j=0;j<code_list.size();j++){
-                            //     string code_now = code_list[j];
-                            //     cout<< code_now << endl;
-                            // }
-                        }
-                        ETF_block_num -= 1;
-                    }
-                    pos_list.push_back(pre_position_col[i]);
                     uni_code += "0";
-                    ETF_block_num += 1;
                 }
             }
 
             cout <<"vision_col: "<< pre_vision_col <<" "<< vision_col << endl;
 
-            if(pre_vision_col != 0){
+            if(count != 1){
                 if((vision_col == pre_vision_col)){
                     row_num += 1;
                 }else{
