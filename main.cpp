@@ -48,7 +48,7 @@ void read_data(string filename, std::vector<vector<int>> &vec_list){
 
 }
 
-void Generate_Inst(string name, int mission_type, int row_size, std::vector<vector<int>> lines_position_all, std::vector<vector<int>> lines_num_all){
+void Generate_Inst(int PE_num, string name, int mission_type, int row_size, std::vector<vector<int>> lines_position_all, std::vector<vector<int>> lines_num_all){
 
     int visual_block_shape = 1;
     int pos_block_num = 2;
@@ -246,9 +246,9 @@ void Generate_Inst(string name, int mission_type, int row_size, std::vector<vect
                     pos_list.clear();
                     ETF_block_num = 0;
                     uni_code.clear();
-                    L_pi =  (L_pi+1)%6;
-                    E_pi =  (E_pi+1)%6;
-                    G_pi =  (G_pi+1)%6;
+                    L_pi =  (L_pi+1)%PE_num;
+                    E_pi =  (E_pi+1)%PE_num;
+                    G_pi =  (G_pi+1)%PE_num;
                 }
             } 
             // I_file << endl;
@@ -264,6 +264,7 @@ int main(int argc, char *argv[]){
     string filename1 = "test_pos.txt";
     string filename2 = "test_num.txt";
     string filename_out = "0";
+    int PE_num = 6;
 
     cout<<argc<<endl;
     if(argc>1){
@@ -282,6 +283,9 @@ int main(int argc, char *argv[]){
         }else if(param=="SFM_3" || param=="4"){
             Mission_type = SFM_3;
         }
+        if(argc>5){
+            PE_num = stoi(argv[5]);
+        }
     }
     cout<<"Mission: "<<Mission_type<<endl;
 
@@ -293,7 +297,7 @@ int main(int argc, char *argv[]){
 
     cout<<"num: "<<lines_num.size()<<endl;
 
-    Generate_Inst(filename_out, Mission_type, lines_num.size(), lines_position, lines_num);
+    Generate_Inst(PE_num, filename_out, Mission_type, lines_num.size(), lines_position, lines_num);
 
     for (auto s : lines_position){
         for (auto a : s){
