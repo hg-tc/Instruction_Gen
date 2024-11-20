@@ -195,9 +195,9 @@ void Generate_Inst(int PE_num, string name, int mission_type, int row_size, std:
                     // int lines = row_num / 2;
                     int lines = row_num;
                     row_num = 1;
-                    string len = std::bitset<4>(lines).to_string();
+                    string len = std::bitset<13>(lines).to_string();
                     string L_pi_s = std::bitset<4>(L_pi).to_string();
-                    string Load_Instruction = "0001"+L_pi_s+"000000001"+"000000001"+len+"11";
+                    string Load_Instruction = "0001"+L_pi_s+"000000001"+len+"11";
                     I_file << Load_Instruction << endl;
                     cout << "Load_Instruction: " << Load_Instruction <<endl;
                     //
