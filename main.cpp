@@ -48,7 +48,7 @@ void read_data(string filename, std::vector<vector<int>> &vec_list){
 
 }
 
-void Generate_Inst(int PE_num, string name, int mission_type, int row_size, std::vector<vector<int>> lines_position_all, std::vector<vector<int>> lines_num_all){
+void Generate_Inst(string output_dir, int PE_num, string name, int mission_type, int row_size, std::vector<vector<int>> lines_position_all, std::vector<vector<int>> lines_num_all){
 
     int visual_block_shape = 1;
     int pos_block_num = 2;
@@ -83,7 +83,7 @@ void Generate_Inst(int PE_num, string name, int mission_type, int row_size, std:
 
     
 
-    ofstream I_file(std::string("Inst_")+name+std::string(".txt"), ios::binary);
+    ofstream I_file(output_dir+std::string("Inst_")+name+std::string(".txt"), ios::binary);
 
     cout <<"open fstream"<< row_size<<endl;
     
@@ -264,6 +264,7 @@ int main(int argc, char *argv[]){
     string filename1 = "test_pos.txt";
     string filename2 = "test_num.txt";
     string filename_out = "0";
+    string output_dir = "../data/";
     int PE_num = 6;
 
     cout<<argc<<endl;
@@ -297,7 +298,7 @@ int main(int argc, char *argv[]){
 
     cout<<"num: "<<lines_num.size()<<endl;
 
-    Generate_Inst(PE_num, filename_out, Mission_type, lines_num.size(), lines_position, lines_num);
+    Generate_Inst(output_dir, PE_num, filename_out, Mission_type, lines_num.size(), lines_position, lines_num);
 
     for (auto s : lines_position){
         for (auto a : s){
